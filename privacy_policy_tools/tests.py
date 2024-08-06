@@ -1,24 +1,32 @@
+from django.test import TestCase
+from django.contrib.auth.models import User
+from .models import PrivacyPolicy, PrivacyPolicyConfirmation
 
-# Copyright (c) 2022 Josef Wachtler
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+class PrivacyPolicyModelTest(TestCase):
+    def setUp(self):
+        self.policy = PrivacyPolicy.objects.create(
+            title="Test Policy",
+            text="This is a test policy.",
+            active=True
+        )
 
-"""
-This module provides the tests. Currently there are none.
-"""
+    def test_privacy_policy_creation(self):
+        self.assertEqual(self.policy.title, "Test Policy")
+        self.assertTrue(self.policy.active)
+
+class PrivacyPolicyConfirmationModelTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.policy = PrivacyPolicy.objects.create(
+            title="Test Policy",
+            text="This is a test policy.",
+            active=True
+        )
+        self.confirmation = PrivacyPolicyConfirmation.objects.create(
+            user=self.user,
+            privacy_policy=self.policy
+        )
+
+    def test_privacy_policy_confirmation_creation(self):
+        self.assertEqual(self.confirmation.user, self.user)
+        self.assertEqual(self.confirmation.privacy_policy, self.policy)

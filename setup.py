@@ -5,19 +5,20 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="django-privacy-policy-tools",
-    version="0.1.2",
+    version="0.2.0",
     author="Josef Wachtler",
     author_email="josef.wachtler@gmail.com",
-    description="This is a highly configurable Django app to manage privacy policies and confirmations.",
+    description="A highly configurable Django app to manage privacy policies and confirmations with enhanced features.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/wachjose88/django-privacy-policy-tools",
     packages=setuptools.find_packages(),
-    python_requires='>=3.4',
+    python_requires='>=3.6',
     install_requires=[
         'django>=4.2.0,<4.3',
         'django-ckeditor',
-        'django-tinymce'
+        'django-tinymce',
+        'djangorestframework>=3.12.0'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

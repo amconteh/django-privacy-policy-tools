@@ -1,22 +1,23 @@
 # Django Privacy Policy Tools
 
-This is a Django app to manage privacy policies and to handle the
-process of confirmation trough the users. 
+This is an enhanced Django app to manage privacy policies and handle the process of confirmation through users.
 
-Features: 
+## Features
 
-* Create policies using the admin interface
-* Different policies for different groups
-* Text styling with html
-* Confirmation middleware to force the users to confirm the policies
-* View all confirmations in the admin interface
+* Create and manage policies using the admin interface
+* Support for different policies for different user groups
+* Text styling with HTML
+* Confirmation middleware to enforce policy acceptance
+* Admin interface for viewing all confirmations
+* Version tracking for policies
+* Basic REST API for accessing policies
+* Improved admin interface with custom actions
 
-This app is build for the current LTS Version of 
-[Django](https://www.djangoproject.com/), which is 4.2.
+This app is built for Django 4.2 (LTS).
 
 ## Install
 
-Install the app using pip.
+Install the app using pip:
 
 ```shell
 pip install django-privacy-policy-tools
@@ -35,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'privacy_policy_tools.apps.PrivacyPolicyToolsConfig',
+    'rest_framework',
     ...
 )
 ```
@@ -290,3 +292,32 @@ To use this feature some settings must be provided:
 To further customize the templates it is possible to override them. For that copy
 the templates beginning with second_confirm to your project and change it
 according to your needs.
+
+New Features
+Version Tracking
+Policies now include a version field to track different versions of the same policy.
+Enhanced Admin Interface
+The admin interface now includes custom actions to mark policies as active or inactive.
+Basic REST API
+A basic REST API is now available for accessing active policies. To use it, include the following in your project's urls.py:
+
+```Python
+from rest_framework.routers import DefaultRouter
+from privacy_policy_tools.api import PrivacyPolicyViewSet
+
+router = DefaultRouter()
+router.register(r'policies', PrivacyPolicyViewSet)
+
+urlpatterns = [
+    ...
+    path('api/', include(router.urls)),
+    ...
+]
+```
+
+Testing
+Basic unit tests have been added. Run them using:
+
+```Python
+python manage.py test privacy_policy_tools
+```

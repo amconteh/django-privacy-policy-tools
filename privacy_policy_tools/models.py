@@ -32,44 +32,27 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from tinymce.models import HTMLField
 
-
 class PrivacyPolicy(models.Model):
-    """
-    This model saves different versions of privacy policies which have to
-    be accepted by the user.
-
-    Fields:
-        - title -- title of the policy
-        - text -- text of the policy
-        - active -- true if the policy is active
-        - published_at -- date of publishing
-        - for_group -- user group
-    """
-    title = models.CharField(max_length=128, verbose_name=_('Title'),
-                             default=_('Privacy Policy'))
+    title = models.CharField(max_length=128, verbose_name=_('Title'), default=_('Privacy Policy'))
     text = HTMLField(verbose_name=_('Text'))
-    confirm_checkbox = models.BooleanField(
-        default=False, verbose_name=_('Confirm checkbox'))
-    confirm_checkbox_text = models.CharField(
-        max_length=128, verbose_name=_('Confirm checkbox text'))
-    confirm_button_text = models.CharField(
-        max_length=128, verbose_name=_('Confirm button text'))
+    confirm_checkbox = models.BooleanField(default=False, verbose_name=_('Confirm checkbox'))
+    confirm_checkbox_text = models.CharField(max_length=128, verbose_name=_('Confirm checkbox text'))
+    confirm_button_text = models.CharField(max_length=128, verbose_name=_('Confirm button text'))
     active = models.BooleanField(default=False, verbose_name=_('Active'))
-    published_at = models.DateTimeField(default=timezone.now,
-                                        verbose_name=_('Published at'))
-    for_group = models.ForeignKey(Group, on_delete=models.CASCADE,
-                                  blank=True, null=True,
-                                  verbose_name=_('For group'))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created at'))
+    published_at = models.DateTimeField(default=timezone.now, verbose_name=_('Published at'))
+    for_group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('For group'))
+    version = models.PositiveIntegerField(default=1, verbose_name=_('Version'))
 
     def __str__(self):
-        """
-        Unicode representation
-        """
-        return _('Privacy Policy') + ': ' + str(self.published_at)
+        return f"Privacy Policy: {self.title} (v{self.version})"
 
     class Meta:
         verbose_name = _('Privacy Policy')
         verbose_name_plural = _('Privacy Policies')
+        ordering = ['-published_at', '-version']
+
+
 
 
 class PrivacyPolicyConfirmation(models.Model):

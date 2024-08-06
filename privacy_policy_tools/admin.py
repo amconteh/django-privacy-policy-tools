@@ -24,32 +24,28 @@ This module provides the admin settings of the privacy_policy_tools.
 """
 
 from django.contrib import admin
-from modeltranslation.admin import TranslationAdmin
+from django.utils.translation import gettext_lazy as _
+from .models import PrivacyPolicy, PrivacyPolicyConfirmation
 
-from privacy_policy_tools.models import PrivacyPolicy, \
-    PrivacyPolicyConfirmation
-
-
-class PrivacyPolicyConfirmationAdmin(admin.ModelAdmin):
-    """
-    View confirmations to privacy policies.
-    """
-    list_display = ('user', 'privacy_policy',
-                    'confirmed_at', 'second_confirmed_at')
-    list_filter = ['privacy_policy', 'confirmed_at', 'second_confirmed_at']
-    search_fields = ['user']
-
-
-class PrivacyPolicyAdmin(TranslationAdmin):
-    """
-    Creating and editing Privacy Policies. The confirmations
-    are shown inline.
-    """
-    list_display = ('title', 'published_at', 'for_group', 'active')
-    list_filter = ['published_at', 'active']
+@admin.register(PrivacyPolicy)
+class PrivacyPolicyAdmin(admin.ModelAdmin):
+    list_display = ('title', 'version', 'published_at', 'for_group', 'active')
+    list_filter = ['active', 'for_group', 'published_at']
     search_fields = ['title', 'text']
     date_hierarchy = 'published_at'
+    actions = ['make_active', 'make_inactive']
 
+    def make_active(self, request, queryset):
+        queryset.update(active=True)
+    make_active.short_description = _("Mark selected policies as active")
 
-admin.site.register(PrivacyPolicy, PrivacyPolicyAdmin)
-admin.site.register(PrivacyPolicyConfirmation, PrivacyPolicyConfirmationAdmin)
+    def make_inactive(self, request, queryset):
+        queryset.update(active=False)
+    make_inactive.short_description = _("Mark selected policies as inactive")
+
+@admin.register(PrivacyPolicyConfirmation)
+class PrivacyPolicyConfirmationAdmin(admin.ModelAdmin):
+    list_display = ('user', 'privacy_policy', 'confirmed_at', 'second_confirmed_at')
+    list_filter = ['privacy_policy', 'confirmed_at', 'second_confirmed_at']
+    search_fields = ['user__username', 'privacy_policy__title']
+    date_hierarchy = 'confirmed_at'
