@@ -293,7 +293,7 @@ To further customize the templates it is possible to override them. For that cop
 the templates beginning with second_confirm to your project and change it
 according to your needs.
 
-#New Features
+## New Features
 Version Tracking
 Policies now include a version field to track different versions of the same policy.
 Enhanced Admin Interface
