@@ -15,7 +15,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     python_requires='>=3.6',
     install_requires=[
-        'django>=4.2.0,<4.3',
+        'django>=4.2.0',
         'django-ckeditor',
         'django-tinymce',
         'djangorestframework>=3.12.0'
