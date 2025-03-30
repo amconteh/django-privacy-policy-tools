@@ -97,12 +97,13 @@ def get_setting(key, default=None):
         - key -- name of the settings value
         - default -- default value
     """
+    if not hasattr(settings, 'PRIVACY_POLICY_TOOLS'):
+        return default
+        
     try:
         return settings.PRIVACY_POLICY_TOOLS.get(key, default)
-    except AttributeError:
-        return None
-    except KeyError:
-        return None
+    except (AttributeError, KeyError):
+        return default
 
 
 def save_confirmation(user):

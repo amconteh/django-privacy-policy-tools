@@ -4,10 +4,10 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="django-privacy-policy-tools",
+    name="django-privacy-policy-tools_updated",
     version="0.2.0",
-    author="Josef Wachtler",
-    author_email="josef.wachtler@gmail.com",
+    author="Abass Conteh",
+    author_email="abassconteh@gmail.com",
     description="A highly configurable Django app to manage privacy policies and confirmations with enhanced features.",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -18,7 +18,8 @@ setuptools.setup(
         'django>=4.2.0',
         'django-ckeditor',
         'django-tinymce',
-        'djangorestframework>=3.12.0'
+        'djangorestframework>=3.12.0',
+        'bleach'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

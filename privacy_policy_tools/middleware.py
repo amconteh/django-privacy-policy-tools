@@ -42,7 +42,7 @@ class PrivacyPolicyMiddleware:
     def __call__(self, request):
         """
         Processes the request and redirects to the privacy policy if
-        the user has not confirmed it yet.
+        the user has not confirmed the latest version yet.
 
         Keyword arguments:
             - request -- calling HttpRequest
@@ -56,8 +56,8 @@ class PrivacyPolicyMiddleware:
         ignore_urls = get_setting('IGNORE_URLS', [])
 
         if not request.user.is_authenticated or \
-           url in request.path_info or \
-           any(ignore in request.path_info for ignore in ignore_urls):
+        url in request.path_info or \
+        any(ignore in request.path_info for ignore in ignore_urls):
             return response
 
         start_hook = get_setting('START_HOOK')
@@ -72,8 +72,11 @@ class PrivacyPolicyMiddleware:
 
         for policy in policies:
             if self._policy_applies_to_user(request.user, policy):
+                # Check for confirmation with matching version
                 confirmation = PrivacyPolicyConfirmation.objects.filter(
-                    privacy_policy=policy, user=request.user
+                    privacy_policy__id=policy.id,
+                    privacy_policy__version=policy.version,  # Added version check
+                    user=request.user
                 ).first()
 
                 if not confirmation:

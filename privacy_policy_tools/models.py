@@ -24,13 +24,16 @@ This module provides the models of the privacy_policy_tools.
 """
 import random
 import string
-
+import secrets
 from django.db import models
 from django.contrib.auth.models import Group
 from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from tinymce.models import HTMLField
+from bleach import clean
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 class PrivacyPolicy(models.Model):
     title = models.CharField(max_length=128, verbose_name=_('Title'), default=_('Privacy Policy'))
@@ -139,16 +142,50 @@ class OneTimeToken(models.Model):
     @classmethod
     def _generat_token(cls):
         """
-        Generates a new token string.
-
+        Generates a new token string using cryptographically secure method.
+        
         Returns:
             the token string
         """
-        token = ''.join(
-            random.choice(string.ascii_lowercase) for i in range(
-                0, cls.LENGTH))
-        return token
+        # Generate a URL-safe token with appropriate length
+        # Base64 encoding means ~1.33 bytes per character
+        byte_length = int(cls.LENGTH * 0.75)  
+        return secrets.token_urlsafe(byte_length)[:cls.LENGTH]
 
     class Meta:
         verbose_name = _('One Time Token')
         verbose_name_plural = _('One Time Tokens')
+@receiver(pre_save, sender=PrivacyPolicy)
+def sanitize_html(sender, instance, **kwargs):
+    """
+    Sanitize HTML content before saving to prevent XSS attacks
+    """
+    # Define allowed HTML tags and attributes
+    allowed_tags = [
+        'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 
+        'ul', 'ol', 'li', 'a', 'span', 'div', 'table', 'thead', 'tbody', 
+        'tr', 'th', 'td'
+    ]
+    allowed_attributes = {
+        'a': ['href', 'title', 'target'],
+        'span': ['style'],
+        'div': ['style'],
+        'table': ['border', 'cellpadding', 'cellspacing', 'style'],
+        'th': ['scope', 'style'],
+        'td': ['style'],
+    }
+    allowed_styles = [
+        'color', 'font-weight', 'text-align', 'margin', 'padding',
+        'border', 'border-width', 'border-style', 'border-color',
+        'background-color', 'width', 'height'
+    ]
+    
+    if instance.text:
+        # Clean the HTML content
+        instance.text = clean(
+            instance.text,
+            tags=allowed_tags,
+            attributes=allowed_attributes,
+            styles=allowed_styles,
+            strip=True
+        )

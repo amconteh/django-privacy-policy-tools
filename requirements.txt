@@ -1,0 +1,5 @@
+django>=4.2.0
+django-ckeditor
+django-tinymce
+djangorestframework>=3.12.0
+bleach
