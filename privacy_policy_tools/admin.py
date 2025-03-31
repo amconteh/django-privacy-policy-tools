@@ -24,7 +24,7 @@ This module provides the admin settings of the privacy_policy_tools.
 """
 
 from django.contrib import admin
-from django.utils.translation import gettext_lazy as _
+# Removed gettext_lazy import
 from .models import PrivacyPolicy, PrivacyPolicyConfirmation
 
 @admin.register(PrivacyPolicy)
@@ -37,11 +37,11 @@ class PrivacyPolicyAdmin(admin.ModelAdmin):
 
     def make_active(self, request, queryset):
         queryset.update(active=True)
-    make_active.short_description = _("Mark selected policies as active")
+    make_active.short_description = "Mark selected policies as active"
 
     def make_inactive(self, request, queryset):
         queryset.update(active=False)
-    make_inactive.short_description = _("Mark selected policies as inactive")
+    make_inactive.short_description = "Mark selected policies as inactive"
 
 @admin.register(PrivacyPolicyConfirmation)
 class PrivacyPolicyConfirmationAdmin(admin.ModelAdmin):

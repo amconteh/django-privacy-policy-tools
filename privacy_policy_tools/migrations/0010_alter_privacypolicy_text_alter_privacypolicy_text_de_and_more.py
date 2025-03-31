@@ -16,14 +16,6 @@ class Migration(migrations.Migration):
             name='text',
             field=tinymce.models.HTMLField(verbose_name='Text'),
         ),
-        migrations.AlterField(
-            model_name='privacypolicy',
-            name='text_de',
-            field=tinymce.models.HTMLField(null=True, verbose_name='Text'),
-        ),
-        migrations.AlterField(
-            model_name='privacypolicy',
-            name='text_en',
-            field=tinymce.models.HTMLField(null=True, verbose_name='Text'),
-        ),
+        # Removed AlterField for text_de
+        # Removed AlterField for text_en
     ]
