@@ -19,8 +19,7 @@ setuptools.setup(
         'django-ckeditor',
         'django-tinymce',
         'djangorestframework>=3.12.0',
-        'bleach',
-        'django-modeltranslation'
+        'bleach'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
